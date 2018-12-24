@@ -92,6 +92,11 @@ class CategoriaController extends Controller
      */
     public function destroy(Categoria $categoria)
     {
+        $categoria = Categoria::findOrFail($request->id);
+        $categoria->nombre = $request->nombre;
+        $categoria->descripcion = $request->descripcion;
+        $categoria->condicion = '1';
+        $categoria->delete();
         //
     }
 

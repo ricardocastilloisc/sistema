@@ -24,6 +24,7 @@ mix.styles(
          'resources/assets/plantilla/js/bootstrap.min.js',
          'resources/assets/plantilla/js/Chart.min.js',
          'resources/assets/plantilla/js/pace.min.js',
-         'resources/assets/plantilla/js/template.js'
+         'resources/assets/plantilla/js/template.js',
+         'resources/assets/plantilla/js/sweetalert2.all.min.js',
       ], 'public/js/plantilla.js')
    .js(['resources/js/app.js'], 'public/js/app.js');
