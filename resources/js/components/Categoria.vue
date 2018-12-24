@@ -25,18 +25,18 @@
           <div class="form-group row">
             <div class="col-md-6">
               <div class="input-group">
-                <select class="form-control col-md-3" id="opcion" name="opcion">
+                <select class="form-control col-md-3" v-model="criterio">
                   <option value="nombre">Nombre</option>
                   <option value="descripcion">Descripción</option>
                 </select>
                 <input
                   type="text"
-                  id="texto"
-                  name="texto"
+                  v-model="buscar"
                   class="form-control"
                   placeholder="Texto a buscar"
+                  @keyup.enter="listarCategoria(1,buscar,criterio)"
                 >
-                <button type="submit" class="btn btn-primary">
+                <button @click="listarCategoria(1,buscar,criterio)" type="submit" class="btn btn-primary">
                   <i class="fa fa-search"></i> Buscar
                 </button>
               </div>
@@ -100,7 +100,7 @@
                 <a
                   class="page-link"
                   href="#"
-                  @click.prevent="cambiarPagina(pagination.current_page - 1)"
+                  @click.prevent="cambiarPagina(pagination.current_page - 1,buscar, criterio)"
                 >Ant</a>
               </li>
 
@@ -110,14 +110,14 @@
                 :key="page"
                 :class="[page == isActived ? 'active' : '']"
               >
-                <a class="page-link" href="#" @click.prevent="cambiarPagina(page)" v-text="page"></a>
+                <a class="page-link" href="#" @click.prevent="cambiarPagina(page,buscar, criterio)" v-text="page"></a>
               </li>
 
               <li class="page-item" v-if="pagination.current_page < pagination.last_page">
                 <a
                   class="page-link"
                   href="#"
-                  @click.prevent="cambiarPagina(pagination.current_page + 1)"
+                  @click.prevent="cambiarPagina(pagination.current_page + 1, buscar, criterio)"
                 >Sig</a>
               </li>
             </ul>
@@ -252,7 +252,9 @@ export default {
         from: 0,
         to: 0
       },
-      offset: 3
+      offset: 3,
+      criterio: "nombre",
+      buscar: ""
     };
   },
   computed: {
@@ -285,9 +287,9 @@ export default {
     }
   },
   methods: {
-    listarCategoria(page) {
+    listarCategoria(page, buscar, criterio) {
       let me = this;
-      var url = "/categoria?page=" + page;
+      var url = "/categoria?page=" + page + '&buscar='+ buscar +'&criterio='+criterio;
       axios
         .get(url)
         .then(function(response) {
@@ -299,12 +301,12 @@ export default {
           console.log(error);
         });
     },
-    cambiarPagina(page) {
+    cambiarPagina(page, buscar, criterio) {
       let me = this;
       //actualizar pagina actual
       me.pagination.current_page = page;
 
-      me.listarCategoria(page);
+      me.listarCategoria(page, buscar, criterio);
     },
     actualizarCategoria() {
       if (this.validarCategoria()) {
@@ -319,7 +321,7 @@ export default {
         })
         .then(function(response) {
           me.cerrarModal();
-          me.listarCategoria();
+          me.listarCategoria(1,'','nombre');
         })
         .catch(function(error) {
           console.log(error);
@@ -337,7 +339,7 @@ export default {
         })
         .then(function(response) {
           me.cerrarModal();
-          me.listarCategoria();
+          me.listarCategoria(1,'','nombre');
         })
         .catch(function(error) {
           console.log(error);
@@ -368,7 +370,9 @@ export default {
             })
             .then(function(response) {
               me.cerrarModal();
-              me.listarCategoria();
+              //acuerdate que me.paginacion 
+              //es para no perder la pagina actual donde estas posicionado
+              me.listarCategoria(me.pagination.current_page,'','nombre');
               swalWithBootstrapButtons(
                 "¡Desactivado!",
                 "El registro fue desactivado.",
@@ -415,7 +419,7 @@ export default {
             })
             .then(function(response) {
               me.cerrarModal();
-              me.listarCategoria();
+              me.listarCategoria(me.pagination.current_page,'','nombre');
               swalWithBootstrapButtons(
                 "¡Activado!",
                 "El registro fue activado.",
@@ -483,7 +487,7 @@ export default {
     }
   },
   mounted() {
-    this.listarCategoria();
+    this.listarCategoria(1,this.buscar,this.criterio);
   }
 };
 </script>
