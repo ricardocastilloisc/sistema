@@ -15,9 +15,8 @@
           <i class="fa fa-align-justify"></i> Categorías
           <button
             type="button"
+            @click="abrirModal('categoria', 'registrar')"
             class="btn btn-secondary"
-            data-toggle="modal"
-            data-target="#modalNuevo"
           >
             <i class="icon-plus"></i>&nbsp;Nuevo
           </button>
@@ -57,18 +56,12 @@
                 <td>
                   <button
                     type="button"
+                    @click="abrirModal('categoria', 'actualizar', categoria)"
                     class="btn btn-warning btn-sm"
-                    data-toggle="modal"
-                    data-target="#modalNuevo"
                   >
                     <i class="icon-pencil"></i>
                   </button> &nbsp;
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-sm"
-                    data-toggle="modal"
-                    data-target="#modalEliminar"
-                  >
+                  <button type="button" class="btn btn-danger btn-sm">
                     <i class="icon-trash"></i>
                   </button>
                 </td>
@@ -115,8 +108,8 @@
     <!--Inicio del modal agregar/actualizar-->
     <div
       class="modal fade"
-      id="modalNuevo"
       tabindex="-1"
+      :class="{'mostrar': modal}"
       role="dialog"
       aria-labelledby="myModalLabel"
       style="display: none;"
@@ -125,8 +118,8 @@
       <div class="modal-dialog modal-primary modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title">Agregar categoría</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <h4 class="modal-title" v-text="tituloModal"></h4>
+            <button type="button" class="close" @click="cerrarModal()" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
@@ -137,8 +130,7 @@
                 <div class="col-md-9">
                   <input
                     type="text"
-                    id="nombre"
-                    name="nombre"
+                    v-model="nombre"
                     class="form-control"
                     placeholder="Nombre de categoría"
                   >
@@ -150,8 +142,7 @@
                 <div class="col-md-9">
                   <input
                     type="email"
-                    id="descripcion"
-                    name="descripcion"
+                    v-model="descripcion"
                     class="form-control"
                     placeholder="Enter Email"
                   >
@@ -160,8 +151,9 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-primary">Guardar</button>
+            <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
+            <button type="button" v-if="tipoAccion==1" class="btn btn-primary">Guardar</button>
+            <button type="button" v-if="tipoAccion==2" class="btn btn-primary">Actualizar</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -209,7 +201,10 @@ export default {
     return {
       nombre: "",
       descripcion: "",
-      arrayCategoria: []
+      arrayCategoria: [],
+      modal: 0,
+      tituloModal: "",
+      tipoAccion : 0
     };
   },
   methods: {
@@ -223,6 +218,33 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
+    },
+    registrarCategoria() {},
+    cerrarModal()
+    {
+        this.modal = 0;
+        this.tituloModal = '';
+        this.nombre= '';
+        this.tipoAccion = '';
+        this.descripcion= '';
+    },
+    abrirModal(modelo, accion, data = []) {
+      switch (modelo) {
+        case "categoria": {
+          switch (accion) {
+            case "registrar": {
+              this.modal = 1;
+              this.tituloModal = "Registrar Categoria";
+              this.nombre = "";
+              this.tipoAccion = 1;
+              this.descripcion = "";
+              break;
+            }
+            case "actualizar": {
+            }
+          }
+        }
+      }
     }
   },
   mounted() {
@@ -230,3 +252,15 @@ export default {
   }
 };
 </script>
+<style>
+.modal-content {
+  width: 100% !important;
+  position: absolute !important;
+}
+.mostrar {
+  display: list-item !important;
+  opacity: 1 !important;
+  position: absolute !important;
+  background-color: #3c29297a !important;
+}
+</style>
