@@ -134,7 +134,6 @@
                     class="form-control"
                     placeholder="Nombre de categoría"
                   >
-                  
                 </div>
               </div>
               <div class="form-group row">
@@ -164,7 +163,12 @@
               class="btn btn-primary"
               @click="registrarCategoria()"
             >Guardar</button>
-            <button type="button" v-if="tipoAccion==2" class="btn btn-primary">Actualizar</button>
+            <button
+              type="button"
+              v-if="tipoAccion==2"
+              class="btn btn-primary"
+              @click="actualizarCategoria()"
+            >Actualizar</button>
           </div>
         </div>
         <!-- /.modal-content -->
@@ -210,6 +214,7 @@
 export default {
   data() {
     return {
+      categoria_id: 0,
       nombre: "",
       descripcion: "",
       arrayCategoria: [],
@@ -227,6 +232,25 @@ export default {
         .get("/categoria")
         .then(function(response) {
           me.arrayCategoria = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+    actualizarCategoria() {
+      if (this.validarCategoria()) {
+        return;
+      }
+      let me = this;
+      axios
+        .put("/categoria/actualizar", {
+          nombre: this.nombre,
+          descripcion: this.descripcion,
+          id: this.categoria_id
+        })
+        .then(function(response) {
+          me.cerrarModal();
+          me.listarCategoria();
         })
         .catch(function(error) {
           console.log(error);
@@ -280,6 +304,14 @@ export default {
               break;
             }
             case "actualizar": {
+              //console.log(data);
+              this.modal = 1;
+              this.categoria_id = data["id"];
+              this.tituloModal = "Actualizar Categoria";
+              this.tipoAccion = 2;
+              this.nombre = data["nombre"];
+              this.descripcion = data["descripcion"];
+              break;
             }
           }
         }
@@ -296,13 +328,11 @@ export default {
   width: 100% !important;
   position: absolute !important;
 }
-.div-error
-{
+.div-error {
   display: flex;
-  justify-content:  center;
+  justify-content: center;
 }
-.text-error
-{
+.text-error {
   color: red !important;
   font-weight: bold;
   justify-content: center;

@@ -1971,9 +1971,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      categoria_id: 0,
       nombre: "",
       descripcion: "",
       arrayCategoria: [],
@@ -1989,6 +1994,23 @@ __webpack_require__.r(__webpack_exports__);
       var me = this;
       axios.get("/categoria").then(function (response) {
         me.arrayCategoria = response.data;
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    actualizarCategoria: function actualizarCategoria() {
+      if (this.validarCategoria()) {
+        return;
+      }
+
+      var me = this;
+      axios.put("/categoria/actualizar", {
+        'nombre': this.nombre,
+        'descripcion': this.descripcion,
+        'id': this.categoria_id
+      }).then(function (response) {
+        me.cerrarModal();
+        me.listarCategoria();
       }).catch(function (error) {
         console.log(error);
       });
@@ -2041,7 +2063,16 @@ __webpack_require__.r(__webpack_exports__);
                 }
 
               case "actualizar":
-                {}
+                {
+                  //console.log(data);
+                  this.modal = 1;
+                  this.categoria_id = data["id"];
+                  this.tituloModal = "Actualizar Categoria";
+                  this.tipoAccion = 2;
+                  this.nombre = data["nombre"];
+                  this.descripcion = data["descripcion"];
+                  break;
+                }
             }
           }
       }
@@ -6020,7 +6051,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.modal-content {\r\n  width: 100% !important;\r\n  position: absolute !important;\n}\n.div-error\r\n{\r\n  display: flex;\r\n  justify-content:  center;\n}\n.text-error\r\n{\r\n  color: red !important;\r\n  font-weight: bold;\r\n  justify-content: center;\n}\n.mostrar {\r\n  display: list-item !important;\r\n  opacity: 1 !important;\r\n  position: absolute !important;\r\n  background-color: #3c29297a !important;\n}\r\n", ""]);
+exports.push([module.i, "\n.modal-content {\r\n  width: 100% !important;\r\n  position: absolute !important;\n}\n.div-error {\r\n  display: flex;\r\n  justify-content: center;\n}\n.text-error {\r\n  color: red !important;\r\n  font-weight: bold;\r\n  justify-content: center;\n}\n.mostrar {\r\n  display: list-item !important;\r\n  opacity: 1 !important;\r\n  position: absolute !important;\r\n  background-color: #3c29297a !important;\n}\r\n", ""]);
 
 // exports
 
@@ -37534,7 +37565,12 @@ var render = function() {
                       "button",
                       {
                         staticClass: "btn btn-primary",
-                        attrs: { type: "button" }
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            _vm.actualizarCategoria()
+                          }
+                        }
                       },
                       [_vm._v("Actualizar")]
                     )

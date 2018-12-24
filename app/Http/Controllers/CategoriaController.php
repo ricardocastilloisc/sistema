@@ -82,8 +82,6 @@ class CategoriaController extends Controller
         $categoria->descripcion = $request->descripcion;
         $categoria->condicion = '1';
         $categoria->save();
-        
-        //
     }
 
     /**
