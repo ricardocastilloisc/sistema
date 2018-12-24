@@ -14,6 +14,8 @@ class CategoriaController extends Controller
      */
     public function index()
     {
+        $categoria = Categoria::all();
+        return $categoria;
         //
     }
 
@@ -35,6 +37,12 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
+        $categoria = new Categoria();
+        $categoria->nombre = $request->nombre;
+        $categoria->descripcion = $request->descripcion;
+        $categoria->condicion = '1';
+        $categoria->save();
+
         //
     }
 
@@ -69,6 +77,12 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, Categoria $categoria)
     {
+        $categoria = Categoria::findOrFail($request->id);
+        $categoria->nombre = $request->nombre;
+        $categoria->descripcion = $request->descripcion;
+        $categoria->condicion = '1';
+        $categoria->save();
+        
         //
     }
 
@@ -81,5 +95,20 @@ class CategoriaController extends Controller
     public function destroy(Categoria $categoria)
     {
         //
+    }
+
+    public function desactivar(Request $request) {
+
+        $categoria = Categoria::findOrFail($request->id);
+        $categoria->condicion = '0';
+        $categoria->save();
+    
+    }
+
+    public function activar(Request $request) {
+
+        $categoria = Categoria::findOrFail($request->id);
+        $categoria->condicion = '1';
+        $categoria->save();
     }
 }
