@@ -134,7 +134,7 @@
                     class="form-control"
                     placeholder="Nombre de categoría"
                   >
-                  <span class="help-block">(*) Ingrese el nombre de la categoría</span>
+                  
                 </div>
               </div>
               <div class="form-group row">
@@ -148,11 +148,22 @@
                   >
                 </div>
               </div>
+
+              <div v-show="errorCategoria" class="form-group row div-error">
+                <div class="text-center text-error">
+                  <div v-for="error in errorMostrarMsjCategoria" :key="error" v-text="error"></div>
+                </div>
+              </div>
             </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" @click="cerrarModal()">Cerrar</button>
-            <button type="button" v-if="tipoAccion==1" class="btn btn-primary" @click="registrarCategoria()">Guardar</button>
+            <button
+              type="button"
+              v-if="tipoAccion==1"
+              class="btn btn-primary"
+              @click="registrarCategoria()"
+            >Guardar</button>
             <button type="button" v-if="tipoAccion==2" class="btn btn-primary">Actualizar</button>
           </div>
         </div>
@@ -204,7 +215,9 @@ export default {
       arrayCategoria: [],
       modal: 0,
       tituloModal: "",
-      tipoAccion : 0
+      tipoAccion: 0,
+      errorCategoria: 0,
+      errorMostrarMsjCategoria: []
     };
   },
   methods: {
@@ -220,28 +233,39 @@ export default {
         });
     },
     registrarCategoria() {
-        let me = this;
-        axios.post('/categoria/registrar',
-        {
-            'nombre': this.nombre,
-            'descripcion': this.descripcion
-        }).then(function (response)
-        {
-            me.cerrarModal();
-            me.listarCategoria();
-
-        }).catch(function (error)
-        {
-            console.log(error);
+      if (this.validarCategoria()) {
+        return;
+      }
+      let me = this;
+      axios
+        .post("/categoria/registrar", {
+          nombre: this.nombre,
+          descripcion: this.descripcion
+        })
+        .then(function(response) {
+          me.cerrarModal();
+          me.listarCategoria();
+        })
+        .catch(function(error) {
+          console.log(error);
         });
     },
-    cerrarModal()
-    {
-        this.modal = 0;
-        this.tituloModal = '';
-        this.nombre= '';
-        this.tipoAccion = '';
-        this.descripcion= '';
+    validarCategoria() {
+      this.errorCategoria = 0;
+      this.errorMostrarMsjCategoria = [];
+      if (!this.nombre)
+        this.errorMostrarMsjCategoria.push(
+          "El nombre de la categoria no puede estar vacio"
+        );
+      if (this.errorMostrarMsjCategoria.length) this.errorCategoria = 1;
+      return this.errorCategoria;
+    },
+    cerrarModal() {
+      this.modal = 0;
+      this.tituloModal = "";
+      this.nombre = "";
+      this.tipoAccion = "";
+      this.descripcion = "";
     },
     abrirModal(modelo, accion, data = []) {
       switch (modelo) {
@@ -271,6 +295,17 @@ export default {
 .modal-content {
   width: 100% !important;
   position: absolute !important;
+}
+.div-error
+{
+  display: flex;
+  justify-content:  center;
+}
+.text-error
+{
+  color: red !important;
+  font-weight: bold;
+  justify-content: center;
 }
 .mostrar {
   display: list-item !important;
