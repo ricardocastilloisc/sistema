@@ -14,23 +14,19 @@ class CategoriaController extends Controller
      */
     public function index(Request $request)
     {
-        //if (!$request->ajax()) return redirect('/');
-        //$categoria = Categoria::all();
-        //if (!$request->ajax()) return redirect('/');
-        //$categoria = DB::table('categorias')->paginate(2);
-
-        $categoria = Categoria::paginate(2);
-
+        if (!$request->ajax()) return redirect('/');
+        $categorias = Categoria::paginate(3);
+ 
         return [
             'pagination' => [
-                'total' => $categoria->total(),
-                'current_page' => $categoria->currentPage(),
-                'per_page' => $categoria->perPage(),
-                'last_page' => $categoria->lastPage(),
-                'from' => $categoria->firstItem(),
-                'to' => $categoria->lastItem(),
+                'total'        => $categorias->total(),
+                'current_page' => $categorias->currentPage(),
+                'per_page'     => $categorias->perPage(),
+                'last_page'    => $categorias->lastPage(),
+                'from'         => $categorias->firstItem(),
+                'to'           => $categorias->lastItem(),
             ],
-            'categoria'->$categoria,
+            'categorias' => $categorias
         ];
     }
 
